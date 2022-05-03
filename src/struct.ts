@@ -12,6 +12,7 @@ export class Struct<T = unknown, S = unknown> {
   type: string
   schema: S
   coercer: (value: unknown, context: Context) => unknown
+  attrs: StructAttrs
   validator: (value: unknown, context: Context) => Iterable<Failure>
   refiner: (value: T, context: Context) => Iterable<Failure>
   entries: (
@@ -23,6 +24,7 @@ export class Struct<T = unknown, S = unknown> {
     type: string
     schema: S
     coercer?: Coercer
+    attrs?: StructAttrs,
     validator?: Validator
     refiner?: Refiner<T>
     entries?: Struct<T, S>['entries']
@@ -33,13 +35,15 @@ export class Struct<T = unknown, S = unknown> {
       validator,
       refiner,
       coercer = (value: unknown) => value,
-      entries = function* () {},
+      entries = function* () { },
+      attrs: meta = {},
     } = props
 
     this.type = type
     this.schema = schema
     this.entries = entries
     this.coercer = coercer
+    this.attrs = meta
 
     if (validator) {
       this.validator = (value, context) => {
@@ -246,3 +250,13 @@ export type Validator = (value: unknown, context: Context) => Result
  */
 
 export type Refiner<T> = (value: T, context: Context) => Result
+
+
+/**
+ * A `StructAttrs` is used to interact with other libraries
+ */
+export type StructAttrs = Record<any, any> & {
+  name?: string,
+  optional?: boolean,
+  nullable?: boolean,
+};

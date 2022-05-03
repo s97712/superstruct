@@ -263,6 +263,10 @@ export function never(): Struct<never, null> {
 export function nullable<T, S>(struct: Struct<T, S>): Struct<T | null, S> {
   return new Struct({
     ...struct,
+    attrs: {
+      ...struct.attrs,
+      nullable: true
+    },
     validator: (value, ctx) => value === null || struct.validator(value, ctx),
     refiner: (value, ctx) => value === null || struct.refiner(value, ctx),
   })
@@ -330,6 +334,10 @@ export function object<S extends ObjectSchema>(schema?: S): any {
 export function optional<T, S>(struct: Struct<T, S>): Struct<T | undefined, S> {
   return new Struct({
     ...struct,
+    attrs: {
+      ...struct.attrs,
+      optional: true
+    },
     validator: (value, ctx) =>
       value === undefined || struct.validator(value, ctx),
     refiner: (value, ctx) => value === undefined || struct.refiner(value, ctx),
@@ -536,4 +544,17 @@ export function union<A extends AnyStruct, B extends AnyStruct[]>(
 
 export function unknown(): Struct<unknown, null> {
   return define('unknown', () => true)
+}
+
+/**
+ * named struct
+ */
+export function named<T, S>(name: string, struct: Struct<T, S>): Struct<T, S> {
+  return new Struct({
+    ...struct,
+    attrs: {
+      ...struct.attrs,
+      name
+    }
+  })
 }
