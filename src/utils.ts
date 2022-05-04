@@ -367,7 +367,7 @@ export type StructSchema<T> = [T] extends [string | undefined]
     : Struct<E>
   : T extends object
   ? T extends IsRecord<T>
-    ? null
+    ? [AnyStruct, AnyStruct]
     : { [K in keyof T]: Describe<T[K]> }
   : null
 
